@@ -34,7 +34,7 @@ define start_docker
 		docker exec -it $(CONTAINER_NAME) /bin/bash -c 'git config --global --add safe.directory /home/admin/dev';\
 	fi;
 
-	if [[ ($(ARCH) == "aarch64" || $(ARCH) == "arm64") && $(shell docker exec -it $(CONTAINER_NAME) /bin/bash -c 'gcc --version | grep gcc | head -n 1 | cut -d" " -f4') == "9.4.0" ]]; then\
+	if [[ (${ARCH} == "aarch64" || ${ARCH} == "arm64") && $$(docker exec -it $(CONTAINER_NAME) /bin/bash -c 'gcc --version | grep gcc | head -n 1 | cut -d" " -f4') == "9.4.0" ]]; then\
 		echo "ARCH: $(ARCH) - Install gcc-11 g++-11";\
 		docker exec $(CONTAINER_NAME) /bin/bash -c 'apt update';\
 		docker exec $(CONTAINER_NAME) /bin/bash -c 'apt install -y gcc-11 g++-11';\
