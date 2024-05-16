@@ -13,7 +13,7 @@ executors:
     shell: /bin/bash --login -eo pipefail
   linux_aarch64_executor:
     docker:
-      - image: envoyproxy/envoy-build-ubuntu:7304f974de2724617b7492ccb4c9c58cd420353a
+      - image: envoyproxy/envoy-build-ubuntu:0ca52447572ee105a4730da5e76fe47c9c5a7c64
     resource_class: arm.2xlarge
     shell: /bin/bash --login -eo pipefail
 
@@ -23,9 +23,9 @@ commands:
       - run:
           name: "make build-envoy-local"
           command: |
-            git submodule update --init
-            git config --global --add safe.directory ./
-            make build-envoy-local
+            apt-get update -y
+            apt-get install docker.io -y
+            make build-envoy
       - store_artifacts:
           path: output
 
