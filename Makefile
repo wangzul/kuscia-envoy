@@ -33,9 +33,8 @@ define start_docker
 		-e GOPROXY='https://goproxy.cn,direct' --cap-add=NET_ADMIN $(BUILD_IMAGE);\
 		docker exec -it $(CONTAINER_NAME) /bin/bash -c 'git config --global --add safe.directory /home/admin/dev';\
 	fi;
-	var GCC_VERSION = $(shell docker exec -it $(CONTAINER_NAME) /bin/bash -c 'gcc --version | grep gcc | head -n 1 | cut -d" " -f4')
-	echo "GCC_VERSION: $GCC_VERSION";\
-	if [[ ($(ARCH) == "aarch64" || $(ARCH) == "arm64") && $GCC_VERSION == "9.4.0" ]]; then\
+
+	if [[ ($(ARCH) == "aarch64" || $(ARCH) == "arm64") && $(shell docker exec -it $(CONTAINER_NAME) /bin/bash -c 'gcc --version | grep gcc | head -n 1 | cut -d" " -f4') == "9.4.0" ]]; then\
 		echo "ARCH: $(ARCH) - Install gcc-11 g++-11";\
 		docker exec $(CONTAINER_NAME) /bin/bash -c 'apt update';\
 		docker exec $(CONTAINER_NAME) /bin/bash -c 'apt install -y gcc-11 g++-11';\
