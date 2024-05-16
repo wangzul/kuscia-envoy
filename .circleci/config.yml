@@ -25,8 +25,8 @@ commands:
           command: |
             apt-get update -y
             apt-get install docker.io -y
-            #mkdir -p /root/test
-            #cp -r "$PWD"/* /root/test && cd /root/test
+            mkdir -p /root/test
+            cp -r "$PWD"/* /root/test && cd /root/test
             git submodule update --init
             git config --global --add safe.directory ./
             make build-envoy
