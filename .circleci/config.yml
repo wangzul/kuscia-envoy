@@ -37,6 +37,7 @@ jobs:
     executor: <<parameters.executor>>
     steps:
       - checkout
+      - setup_remote_docker
       - build_envoy
   docker_image_publish:
     docker:
