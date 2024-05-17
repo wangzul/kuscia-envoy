@@ -25,9 +25,7 @@ commands:
           command: |
             apt-get update -y
             apt-get install docker.io -y
-            mkdir -p /root/test
-            cp -r "$PWD"/* /root/test && cd /root/test
-            git init
+            chmod 777 $PWD
             make build-envoy
       - store_artifacts:
           path: output
