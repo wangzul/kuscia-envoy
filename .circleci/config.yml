@@ -31,7 +31,7 @@ commands:
             apt-get install docker.io -y
             docker run -itd --rm --name kuscia-envoy -e GOPROXY='https://goproxy.cn,direct' --cap-add=NET_ADMIN envoyproxy/envoy-build-ubuntu:7304f974de2724617b7492ccb4c9c58cd420353a;\
             docker cp  $PWD kuscia-envoy:/root
-            docker exec -it kuscia-envoy /bin/bash -c 'git config --global --add safe.directory ./'
+            docker exec -it kuscia-envoy /bin/bash -c 'git init'
             docker exec -it kuscia-envoy /bin/bash -c 'git submodule update --init'
             docker exec -it kuscia-envoy /bin/bash -c 'make build-envoy-local'
             else
@@ -96,7 +96,7 @@ workflows:
       - linux_build_envoy:
           matrix:
             parameters:
-              executor: [ "linux_x64_executor", "linux_aarch64_executor" ]
+              executor: [ "linux_aarch64_executor" ]
       - docker_image_publish:
           requires:
             - linux_build_envoy
