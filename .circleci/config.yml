@@ -27,24 +27,14 @@ commands:
             ARCH=$(uname -m)
             
             if [ "$ARCH" == "aarch64" ]; then
-            apt-get update -y
-            apt-get install docker.io -y
-            export WORKDIR=/root/project
-            CONTAINER_NAME=kuscia-envoy
-            docker run -itd --rm --name $CONTAINER_NAME -w $WORKDIR -e GOPROXY='https://goproxy.cn,direct' --cap-add=NET_ADMIN envoyproxy/envoy-build-ubuntu:7304f974de2724617b7492ccb4c9c58cd420353a;\
-            docker cp  . kuscia-envoy:$WORKDIR
-            docker exec -it $CONTAINER_NAME /bin/bash -c 'git config --global --add safe.directory ./'
-            docker exec -it $CONTAINER_NAME /bin/bash -c 'git submodule update --init'
-            #docker exec -it $CONTAINER_NAME /bin/bash -c 'make build-envoy-local'
-            docker exec $CONTAINER_NAME /bin/bash -c 'apt update'
-            docker exec $CONTAINER_NAME /bin/bash -c 'apt install -y gcc-11 g++-11'
-            docker exec $CONTAINER_NAME /bin/bash -c 'rm /usr/bin/g++ /usr/bin/gcc && ln -s /usr/bin/g++-11 /usr/bin/g++ && ln -s /usr/bin/gcc-11 /usr/bin/gcc';\
-            docker exec -it $CONTAINER_NAME bash
+            apt-get update  -y &>/dev/null 
+            apt-get install  g++-11 cmake nasm ninja-build -y
+            update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 1100
+            update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 1100
+            fi
+            git submodule update --init
+            git config --global --add safe.directory ./
             make build-envoy-local
-            mkdir -p output/linux/${ARCH}/bin
-            mkdir -p output/linux/${ARCH}/conf
-            docker cp $CONTAINER_NAME:$$WORKDIR/bazel-bin/envoy output/linux/${ARCH}/bin
-            docker cp $CONTAINER_NAME:$$WORKDIR/kuscia/conf/envoy.yaml output/linux/${ARCH}/conf
             else
             git config --global --add safe.directory ./
             git submodule update --init
