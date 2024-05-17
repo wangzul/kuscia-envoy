@@ -36,6 +36,9 @@ commands:
             docker exec -it $CONTAINER_NAME /bin/bash -c 'git config --global --add safe.directory ./'
             docker exec -it $CONTAINER_NAME /bin/bash -c 'git submodule update --init'
             #docker exec -it $CONTAINER_NAME /bin/bash -c 'make build-envoy-local'
+            docker exec $CONTAINER_NAME /bin/bash -c 'apt update'
+            docker exec $CONTAINER_NAME /bin/bash -c 'apt install -y gcc-11 g++-11'
+            docker exec $CONTAINER_NAME /bin/bash -c 'rm /usr/bin/g++ /usr/bin/gcc && ln -s /usr/bin/g++-11 /usr/bin/g++ && ln -s /usr/bin/gcc-11 /usr/bin/gcc';\
             docker exec -it $CONTAINER_NAME bash
             make build-envoy-local
             mkdir -p output/linux/${ARCH}/bin
