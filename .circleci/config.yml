@@ -26,10 +26,8 @@ commands:
             apt-get update -y
             apt-get install docker.io -y
             mkdir -p /root/test
-            git config --global --add safe.directory ./
             cp -r "$PWD"/* /root/test && cd /root/test
-            #git submodule update --init
-
+            git init
             make build-envoy
       - store_artifacts:
           path: output
