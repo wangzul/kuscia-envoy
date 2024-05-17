@@ -23,11 +23,9 @@ commands:
       - run:
           name: "make build-envoy-local"
           command: |
-            apt-get update -y
-            apt-get install docker.io -y
-            echo '$PWD'
+            echo $PWD
             chmod 777 $PWD
-            make build-envoy
+
       - store_artifacts:
           path: output
 
