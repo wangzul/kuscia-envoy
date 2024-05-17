@@ -30,11 +30,19 @@ commands:
             apt-get update -y
             apt-get install docker.io -y
             export WORKDIR=/root/project
-            docker run -itd --rm --name kuscia-envoy -w $WORKDIR -e GOPROXY='https://goproxy.cn,direct' --cap-add=NET_ADMIN envoyproxy/envoy-build-ubuntu:7304f974de2724617b7492ccb4c9c58cd420353a;\
+            CONTAINER_NAME=kuscia-envoy
+            docker run -itd --rm --name $CONTAINER_NAME -w $WORKDIR -e GOPROXY='https://goproxy.cn,direct' --cap-add=NET_ADMIN envoyproxy/envoy-build-ubuntu:7304f974de2724617b7492ccb4c9c58cd420353a;\
             docker cp  . kuscia-envoy:$WORKDIR
-            docker exec -it kuscia-envoy /bin/bash -c 'git config --global --add safe.directory ./'
-            docker exec -it kuscia-envoy /bin/bash -c 'git submodule update --init'
-            docker exec -it kuscia-envoy /bin/bash -c 'make build-envoy-local'
+            docker exec -it $CONTAINER_NAME /bin/bash -c 'git config --global --add safe.directory ./'
+            docker exec -it $CONTAINER_NAME /bin/bash -c 'git submodule update --init'
+            #docker exec -it $CONTAINER_NAME /bin/bash -c 'make build-envoy-local'
+            docker exec -it $CONTAINER_NAME bash
+            make build-envoy-local
+            exit
+            mkdir -p output/linux/${ARCH}/bin
+	          mkdir -p output/linux/${ARCH}/conf
+	          docker cp $CONTAINER_NAME:$WORKDIR/bazel-bin/envoy output/linux/${ARCH}/bin
+	          docker cp $CONTAINER_NAME:$WORKDIR/kuscia/conf/envoy.yaml output/linux/${ARCH}/conf
             else
             git config --global --add safe.directory ./
             git submodule update --init
