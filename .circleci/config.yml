@@ -8,13 +8,13 @@ version: 2.1
 executors:
   linux_x64_executor: # declares a reusable executor
     docker:
-      - image: envoyproxy/envoy-build-ubuntu:7304f974de2724617b7492ccb4c9c58cd420353a
-    resource_class: large
+      - image: envoyproxy/envoy-build-ubuntu:0ca52447572ee105a4730da5e76fe47c9c5a7c64
+    resource_class: 2xlarge
     shell: /bin/bash --login -eo pipefail
   linux_aarch64_executor:
     docker:
       - image: envoyproxy/envoy-build-ubuntu:0ca52447572ee105a4730da5e76fe47c9c5a7c64
-    resource_class: arm.large
+    resource_class: arm.2xlarge
     shell: /bin/bash --login -eo pipefail
 
 commands:
@@ -23,31 +23,9 @@ commands:
       - run:
           name: "make build-envoy-local"
           command: |
-            
-            ARCH=$(uname -m)
-            
-            if [ "$ARCH" == "aarch64" ]; then
-            apt-get update -y
-            apt-get install docker.io -y
-            export WORKDIR=/root/project
-            CONTAINER_NAME=kuscia-envoy
-            docker run -itd --rm --name $CONTAINER_NAME -w $WORKDIR -e GOPROXY='https://goproxy.cn,direct' --cap-add=NET_ADMIN envoyproxy/envoy-build-ubuntu:7304f974de2724617b7492ccb4c9c58cd420353a;\
-            docker cp  . kuscia-envoy:$WORKDIR
-            docker exec -it $CONTAINER_NAME /bin/bash -c 'git config --global --add safe.directory ./'
-            docker exec -it $CONTAINER_NAME /bin/bash -c 'git submodule update --init'
-            #docker exec -it $CONTAINER_NAME /bin/bash -c 'make build-envoy-local'
-            docker exec -it $CONTAINER_NAME bash
-            make build-envoy-local
-            exit
-            mkdir -p output/linux/${ARCH}/bin
-	          mkdir -p output/linux/${ARCH}/conf
-	          docker cp $CONTAINER_NAME:$WORKDIR/bazel-bin/envoy output/linux/${ARCH}/bin
-	          docker cp $CONTAINER_NAME:$WORKDIR/kuscia/conf/envoy.yaml output/linux/${ARCH}/conf
-            else
-            git config --global --add safe.directory ./
             git submodule update --init
+            git config --global --add safe.directory ./
             make build-envoy-local
-            fi
       - store_artifacts:
           path: output
 
@@ -59,7 +37,6 @@ jobs:
     executor: <<parameters.executor>>
     steps:
       - checkout
-      - setup_remote_docker
       - build_envoy
   docker_image_publish:
     docker:
@@ -105,7 +82,7 @@ workflows:
       - linux_build_envoy:
           matrix:
             parameters:
-              executor: [ "linux_aarch64_executor" ]
+              executor: [ "linux_x64_executor", "linux_aarch64_executor" ]
       - docker_image_publish:
           requires:
             - linux_build_envoy
