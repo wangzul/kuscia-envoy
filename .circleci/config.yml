@@ -29,9 +29,9 @@ commands:
             if [ "$ARCH" == "aarch64" ]; then
             apt-get update -y
             apt-get install docker.io -y
-            docker run -itd --rm --name kuscia-envoy -e GOPROXY='https://goproxy.cn,direct' --cap-add=NET_ADMIN envoyproxy/envoy-build-ubuntu:7304f974de2724617b7492ccb4c9c58cd420353a;\
-            docker cp  $PWD kuscia-envoy:/root
-            docker exec -it kuscia-envoy /bin/bash -c 'git init'
+            docker run -itd --rm --name kuscia-envoy -w /root/project -e GOPROXY='https://goproxy.cn,direct' --cap-add=NET_ADMIN envoyproxy/envoy-build-ubuntu:7304f974de2724617b7492ccb4c9c58cd420353a;\
+            docker cp  . kuscia-envoy:/root/project
+            docker exec -it kuscia-envoy /bin/bash -c 'git config --global --add safe.directory ./'
             docker exec -it kuscia-envoy /bin/bash -c 'git submodule update --init'
             docker exec -it kuscia-envoy /bin/bash -c 'make build-envoy-local'
             else
