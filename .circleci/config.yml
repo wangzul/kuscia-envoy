@@ -36,7 +36,7 @@ commands:
             fi
             git config --global --add safe.directory ./
             git submodule update --init
-            make build-envoy-local
+            make test-envoy-local
             
       - store_artifacts:
           path: output
@@ -95,7 +95,7 @@ workflows:
       - linux_build_envoy:
           matrix:
             parameters:
-              executor: [ "linux_aarch64_executor" ]
+              executor: [ "linux_x64_executor", "linux_aarch64_executor" ]
       - docker_image_publish:
           requires:
             - linux_build_envoy
