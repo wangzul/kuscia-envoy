@@ -27,11 +27,12 @@ commands:
             ARCH=$(uname -m)
             
             if [ "$ARCH" == "aarch64" ]; then
-            echo "开始安装"
-            apt-get update  -y &>/dev/null 
+            set +e
+            apt-get update  -y
             apt-get install  g++-11 cmake nasm ninja-build -y
             update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 1100
             update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 1100
+            set -e
             fi
             git config --global --add safe.directory ./
             git submodule update --init
