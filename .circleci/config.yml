@@ -9,7 +9,7 @@ executors:
   linux_x64_executor: # decl1ares a reusable executor
     docker:
       - image: envoyproxy/envoy-build-ubuntu:0ca52447572ee105a4730da5e76fe47c9c5a7c64
-    resource_class: 2xlarge
+    resource_class: large
     shell: /bin/bash --login -eo pipefail
   linux_aarch64_executor:
     docker:
